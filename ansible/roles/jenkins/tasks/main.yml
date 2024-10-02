@@ -1,0 +1,36 @@
+---
+# - name: Install Java
+#   apt:
+#     name: openjdk-11-jdk
+#     state: present
+
+- name: Pull Jenkins Docker image
+  docker_image:
+    name: jenkins/jenkins
+    source: pull
+    tag: lts-jdk17
+
+- name: Create a volume for Jenkins data
+  docker_volume:
+    name: jenkins_home
+
+- name: Ensure Jenkins container is running
+  docker_container:
+    name: jenkins
+    image: jenkins/jenkins:lts-jdk17
+    state: started
+    ports:
+      - '8080:8080'
+      - '50000:50000'
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+- name: Wait for Jenkins to be up
+  uri:
+    url: http://localhost:8080
+    return_content: yes
+  register: jenkins_status
+  retries: 10
+  delay: 15
+  until: jenkins_status.status == 200
+  ignore_errors: true

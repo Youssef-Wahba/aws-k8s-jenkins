@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-dns-resolver-deployment
+  labels:
+    app: nodejs-dns-resolver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs-dns-resolver
+  template:
+    metadata:
+      labels:
+        app: nodejs-dns-resolver
+    spec:
+      containers:
+        - name: nodejs-dns-resolver
+          image: k8s-jenkins-nodejs:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: '64Mi'
+              cpu: '250m'
+            limits:
+              memory: '128Mi'
+              cpu: '500m'
