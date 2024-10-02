@@ -7,3 +7,4 @@ terraform.tfstate.backup
 /terraform_project/.terraform
 terraform_project/terraform.tfstate.backup
 terraform_project/terraform.tfstate
+/terraform/.terraform
