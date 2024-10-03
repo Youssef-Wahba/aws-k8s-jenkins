@@ -1,38 +1,38 @@
----
+# ---
 # - name: Install Java
 #   apt:
 #     name: openjdk-11-jdk
 #     state: present
 
-- name: Pull Jenkins Docker image
-  docker_image:
-    name: jenkins/jenkins
-    source: pull
-    tag: lts-jdk17
+# - name: Pull Jenkins Docker image
+#   docker_image:
+#     name: jenkins/jenkins
+#     source: pull
+#     tag: lts-jdk17
 
 # - name: Create a volume for Jenkins data
 #   docker_volume:
 #     name: jenkins_home
 
-- name: Create Jenkins home directory
-  file:
-    path: /var/jenkins_home
-    state: directory
-    owner: 1000
-    group: 1000
-    mode: '0755'
+# - name: Create Jenkins home directory
+#   file:
+#     path: /var/jenkins_home
+#     state: directory
+#     owner: 1000
+#     group: 1000
+#     mode: '0755'
 
-- name: Run Jenkins container
-  docker_container:
-    name: jenkins
-    image: jenkins/jenkins:lts
-    state: started
-    restart_policy: always
-    ports:
-      - '8080:8080' # Jenkins UI port
-      - '50000:50000' # Jenkins agent port (for connecting agents)
-    volumes:
-      - /var/jenkins_home:/var/jenkins_home
+# - name: Run Jenkins container
+#   docker_container:
+#     name: jenkins
+#     image: jenkins/jenkins:lts
+#     state: started
+#     restart_policy: always
+#     ports:
+#       - '8080:8080' # Jenkins UI port
+#       - '50000:50000' # Jenkins agent port (for connecting agents)
+#     volumes:
+#       - /var/jenkins_home:/var/jenkins_home
 # - name: Wait for Jenkins to be up
 #   uri:
 #     url: http://localhost:8080
@@ -42,3 +42,34 @@
 #   delay: 15
 #   until: jenkins_status.status == 200
 #   ignore_errors: true
+
+---
+- name: Pull Jenkins Docker image
+  docker_image:
+    name: jenkins/jenkins
+    source: pull
+    tag: lts-jdk17
+
+- name: Create Jenkins home directory
+  file:
+    path: /var/jenkins_home
+    state: directory
+    owner: 1000
+    group: 1000
+    mode: '0755'
+
+- name: Fix permissions on Jenkins home directory
+  ansible.builtin.command:
+    cmd: chown -R 1000:1000 /var/jenkins_home
+
+- name: Run Jenkins container
+  docker_container:
+    name: jenkins
+    image: jenkins/jenkins:lts-jdk17
+    state: started
+    restart_policy: always
+    ports:
+      - '8080:8080' # Jenkins UI port
+      - '50000:50000' # Jenkins agent port
+    volumes:
+      - /var/jenkins_home:/var/jenkins_home
