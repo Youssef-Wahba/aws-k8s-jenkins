@@ -1,5 +1,5 @@
 project-test.pem
-depi.pem
+*.pem
 terraform.tfstate
 *.hcl
 /.terraform
