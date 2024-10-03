@@ -1,0 +1,21 @@
+controller:
+  replicaCount: 2 # Run 2 replicas of NGINX controller
+  service:
+    type: LoadBalancer # Expose the NGINX controller via LoadBalancer
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+defaultBackend:
+  enabled: true # Deploy the default NGINX backend
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi

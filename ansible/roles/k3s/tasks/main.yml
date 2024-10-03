@@ -1,0 +1,9 @@
+---
+- name: Install k3s
+  shell: curl -sfL https://get.k3s.io | sh -
+
+- name: Enable k3s service
+  systemd:
+    name: k3s
+    enabled: yes
+    state: started
