@@ -1,0 +1,8 @@
+---
+- name: Add Helm repo for NGINX Ingress
+  shell: helm repo add nginx-stable https://helm.nginx.com/stable && helm repo update
+
+- name: Install NGINX Ingress using Helm
+  shell: helm upgrade nginx-ingress nginx-stable/nginx-ingress --namespace ingress-nginx --install -f {{ playbook_dir }}/roles/helm/files/nginx-values.yml
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml

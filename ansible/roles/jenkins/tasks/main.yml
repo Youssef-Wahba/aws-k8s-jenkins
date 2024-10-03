@@ -10,27 +10,35 @@
     source: pull
     tag: lts-jdk17
 
-- name: Create a volume for Jenkins data
-  docker_volume:
-    name: jenkins_home
+# - name: Create a volume for Jenkins data
+#   docker_volume:
+#     name: jenkins_home
 
-- name: Ensure Jenkins container is running
+- name: Create Jenkins home directory
+  file:
+    path: /var/jenkins_home
+    state: directory
+    owner: 1000
+    group: 1000
+    mode: '0755'
+
+- name: Run Jenkins container
   docker_container:
     name: jenkins
-    image: jenkins/jenkins:lts-jdk17
+    image: jenkins/jenkins:lts
     state: started
+    restart_policy: always
     ports:
-      - '8080:8080'
-      - '50000:50000'
+      - '8080:8080' # Jenkins UI port
+      - '50000:50000' # Jenkins agent port (for connecting agents)
     volumes:
-      - jenkins_home:/var/jenkins_home
-
-- name: Wait for Jenkins to be up
-  uri:
-    url: http://localhost:8080
-    return_content: yes
-  register: jenkins_status
-  retries: 10
-  delay: 15
-  until: jenkins_status.status == 200
-  ignore_errors: true
+      - /var/jenkins_home:/var/jenkins_home
+# - name: Wait for Jenkins to be up
+#   uri:
+#     url: http://localhost:8080
+#     return_content: yes
+#   register: jenkins_status
+#   retries: 10
+#   delay: 15
+#   until: jenkins_status.status == 200
+#   ignore_errors: true

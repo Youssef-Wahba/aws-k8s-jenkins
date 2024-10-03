@@ -5,5 +5,7 @@
   roles:
     - apt
     - docker
+    - k3s
+    - helm
     - jenkins
 # - hosts: jenkins-server
