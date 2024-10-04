@@ -1,8 +1,8 @@
 # ECR Repository
 resource "aws_ecr_repository" "docker_repo" {
-  name                 = "docker-repo"
+  name                 = "nodejs-dns-resolver"
   image_tag_mutability = "MUTABLE"
   tags = {
-    Name = "docker-repo"
+    Name = "nodejs-dns-resolver"
   }
 }

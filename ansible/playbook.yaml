@@ -1,9 +1,8 @@
 ---
 - name: Configure Jenkins and Docker
-  hosts: localhost
+  hosts: jenkins_servers
   become: true
   roles:
     - apt
     - docker
     - jenkins
-# - hosts: jenkins-server

@@ -1,10 +1,21 @@
 import dns from 'dns/promises';
 import util from 'util';
+import express from 'express';
+import cors from 'cors';
+import { config } from 'dotenv';
+
+config();
 
 const nginxService = 'nginx-service';
 const nginxNamespace = 'nginx-namespace';
 const dnsName = `${nginxService}.${nginxNamespace}.svc.cluster.local`;
 // const dnsName = `sanadedu.com`;
+
+const app = express();
+const port = process.env.PORT || 3030;
+
+app.use(express.json());
+app.use(cors());
 
 const resolveDNS = async () => {
 	try {
@@ -22,4 +33,11 @@ export const continuouslyResolveDNS = async (interval = 5000) => {
 	}
 };
 
-continuouslyResolveDNS();
+app.get('/', async (req, res) => {
+	return res.status(200).send(await resolveDNS());
+});
+
+app.listen(port, () => {
+	console.log(`Server is running on port ${port}`);
+	continuouslyResolveDNS();
+});
