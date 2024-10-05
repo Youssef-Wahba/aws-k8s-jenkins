@@ -40,9 +40,8 @@ pipeline {
             steps {
                 script {
                     // Log in to AWS ECR
-                    sh '''
-                    aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO
-                    '''
+                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}"
+                    
                     // Tag the Docker image
                     sh "docker tag ${IMAGE_NAME}:latest ${ECR_REPO}:${BUILD_NUMBER}"
 
