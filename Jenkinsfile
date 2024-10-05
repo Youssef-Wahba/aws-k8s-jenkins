@@ -15,9 +15,7 @@ pipeline {
                         string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO'),
                         // file(credentialsId: 'KUBE_CONFIG', variable: 'KUBECONFIG')
-                    ]){
-                        echo "AWS Access Key: ${AWS_ACCESS_KEY_ID}"  // Caution: Avoid logging sensitive info
-                        echo "AWS Region: ${AWS_REGION}"
+                    ]) {
                         echo 'AWS and Kubernetes credentials loaded as environment variables.'
                     }
                 }
@@ -42,8 +40,9 @@ pipeline {
             steps {
                 script {
                     // Log in to AWS ECR
-                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}"
-
+                    sh '''
+                    aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${ECR_REPO}"
+                    '''
                     // Tag the Docker image
                     sh "docker tag ${IMAGE_NAME}:latest ${ECR_REPO}:${BUILD_NUMBER}"
 
