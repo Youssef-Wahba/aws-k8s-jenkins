@@ -72,4 +72,5 @@
       - '8080:8080' # Jenkins UI port
       - '50000:50000' # Jenkins agent port
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - /var/jenkins_home:/var/jenkins_home
