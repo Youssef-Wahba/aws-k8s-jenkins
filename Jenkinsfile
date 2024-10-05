@@ -14,7 +14,9 @@ pipeline {
                         string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO'),
                         // file(credentialsId: 'KUBE_CONFIG', variable: 'KUBECONFIG')
-                    ])
+                    ]) {
+                        echo 'AWS and Kubernetes credentials loaded as environment variables.'
+                    }
                 }
             }
         }
