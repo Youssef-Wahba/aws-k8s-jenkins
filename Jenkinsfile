@@ -10,6 +10,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([
+                        string(credentialsId: 'AWS_REGION', variable: 'AWS_REGION'),
                         string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
                         string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO'),
