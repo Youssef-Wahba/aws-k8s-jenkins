@@ -6,6 +6,8 @@ resource "aws_instance" "k3s_instance" {
   key_name               = aws_key_pair.generated_key_pair.key_name
   vpc_security_group_ids = [aws_security_group.ec2_security_group.id]
   iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+  # Enable public IP address
+  associate_public_ip_address = true
   user_data = <<-EOF
     #!/bin/bash
     set -e
@@ -29,7 +31,8 @@ resource "aws_instance" "k3s_instance" {
     helm repo update
 
     echo "Installing NGINX ingress controller..."
-    helm install nginx-ingress ingress-nginx/ingress-nginx
+    helm install nginx-ingress ingress-nginx/ingress-nginx \
+    --set controller.publishService.enabled=true
   EOF
   tags = {
     Name = "k3s-instance"
