@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'nodejs-app'
+        IMAGE_NAME = credentials("IMAGE_NAME")
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
         AWS_REGION = credentials("AWS_REGION")
         AWS_ACCESS_KEY_ID = credentials("AWS_ACCESS_KEY_ID")
@@ -49,11 +49,6 @@ pipeline {
         stage('Tag and Push to ECR') {
             steps {
                 script {
-                    // Debugging: Print environment variables
-                    echo "AWS_REGION: ${AWS_REGION}"
-                    echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"
-                    echo "ECR_REPO: ${ECR_REPO}"
-
                     // Log in to ECR
                     echo "Logging in to AWS ECR..."
                     sh """
