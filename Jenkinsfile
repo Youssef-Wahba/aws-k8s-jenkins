@@ -4,30 +4,33 @@ pipeline {
     environment {
         IMAGE_NAME = 'nodejs-app'
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
-        AWS_REGION= "us-east-1"
-
+        AWS_REGION = credentials("AWS_REGION")
+        AWS_ACCESS_KEY_ID = credentials("AWS_ACCESS_KEY_ID")
+        AWS_SECRET_ACCESS_KEY = credentials("AWS_SECRET_ACCESS_KEY")
+        ECR_REPO = credentials("ECR_REPO")
+        AWS_ACCOUNT_ID = credentials("AWS_ACCOUNT_ID")
     }
 
     stages {
-        stage('Setup Secrets') {
-            steps {
-                script {
-                    withCredentials([
-                        // string(credentialsId: 'AWS_REGION', variable: 'AWS_REGION'),
-                        string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
-                        string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
-                        string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO'),
-                        string(credentialsId: 'AWS_ACCOUNT_ID', variable: 'AWS_ACCOUNT_ID'),
-                        // file(credentialsId: 'KUBE_CONFIG', variable: 'KUBECONFIG')
-                    ]) {
-                        echo 'AWS and Kubernetes credentials loaded as environment variables.'
-                        echo "AWS_REGION: ${AWS_REGION}"  // Debugging output
-                        echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"  // Debugging output
-                        echo 'AWS credentials loaded as environment variables.'
-                    }
-                }
-            }
-        }
+        // stage('Setup Secrets') {
+        //     steps {
+        //         script {
+        //             withCredentials([
+        //                 // string(credentialsId: 'AWS_REGION', variable: 'AWS_REGION'),
+        //                 string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
+        //                 string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
+        //                 string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO'),
+        //                 string(credentialsId: 'AWS_ACCOUNT_ID', variable: 'AWS_ACCOUNT_ID'),
+        //                 // file(credentialsId: 'KUBE_CONFIG', variable: 'KUBECONFIG')
+        //             ]) {
+        //                 echo 'AWS and Kubernetes credentials loaded as environment variables.'
+        //                 echo "AWS_REGION: ${AWS_REGION}"  // Debugging output
+        //                 echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"  // Debugging output
+        //                 echo 'AWS credentials loaded as environment variables.'
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Checkout') {
             steps {
