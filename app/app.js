@@ -6,13 +6,12 @@ import { config } from 'dotenv';
 
 config();
 
-const nginxService = 'nginx-service';
-const nginxNamespace = 'nginx-namespace';
-const dnsName = `${nginxService}.${nginxNamespace}.svc.cluster.local`;
-// const dnsName = `sanadedu.com`;
+const serviceName = 'nodejs-app-service';
+const namespaceName = 'nginx-namespace';
+const dnsName = `${serviceName}.${namespaceName}.svc.cluster.local`;
 
 const app = express();
-const port = process.env.PORT || 3030;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());

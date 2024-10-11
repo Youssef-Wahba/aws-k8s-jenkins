@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nodejs-dns-resolver-service
+  name: nodejs-app-service
+  namespace: nginx-namespace
 spec:
   selector:
-    app: nodejs-dns-resolver
+    app: nodejs-app
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 3000
+      targetPort: 3030
   type: ClusterIP

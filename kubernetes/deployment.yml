@@ -1,24 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nodejs-dns-resolver-deployment
+  name: nodejs-app-deployment
+  namespace: nginx-namespace
   labels:
-    app: nodejs-dns-resolver
+    app: nodejs-app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: nodejs-dns-resolver
+      app: nodejs-app
   template:
     metadata:
       labels:
-        app: nodejs-dns-resolver
+        app: nodejs-app
     spec:
       containers:
         - name: nodejs-dns-resolver
-          image: k8s-jenkins-nodejs:latest
+          image: localhost:5000/nodejs-app:latest
           ports:
-            - containerPort: 3000
+            - containerPort: 3030
           resources:
             requests:
               memory: '64Mi'

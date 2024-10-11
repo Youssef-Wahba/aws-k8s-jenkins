@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'nodejs-dns-resolver'
+        IMAGE_NAME = 'nodejs-app'
+        BUILD_NUMBER = "${env.BUILD_NUMBER}"
     }
 
     stages {
@@ -39,18 +40,32 @@ pipeline {
         stage('Tag and Push to ECR') {
             steps {
                 script {
-                    // Log in to AWS ECR
-                    sh '''
-                    aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${ECR_REPO}"
-                    '''
-                    // Tag the Docker image
-                    sh "docker tag ${IMAGE_NAME}:latest ${ECR_REPO}:${BUILD_NUMBER}"
+                    try {
+                        // Log in to AWS ECR
+                        echo "Logging in to AWS ECR..."
+                        sh '''
+                        aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${ECR_REPO}"
+                        '''
 
-                    // Push the Docker image to AWS ECR
-                    sh "docker push ${ECR_REPO}:${BUILD_NUMBER}"
+                        // Tag the Docker image
+                        echo "Tagging Docker image..."
+                        sh "docker tag ${IMAGE_NAME}:latest ${ECR_REPO}:${BUILD_NUMBER}"
+
+                        // Push the Docker image to AWS ECR
+                        echo "Pushing Docker image to ECR..."
+                        sh "docker push ${ECR_REPO}:${BUILD_NUMBER}"
+
+                        echo "Successfully pushed ${IMAGE_NAME}:${BUILD_NUMBER} to ECR."
+
+                    } catch (Exception e) {
+                        // Handle any errors that occur during the process
+                        error "Failed to tag or push the image to ECR: ${e.message}"
+                    }
                 }
             }
         }
+    }
+
 
         // stage('Deploy to Kubernetes') {
         //     steps {
@@ -73,4 +88,5 @@ pipeline {
             cleanWs()  // Clean workspace after build
         }
     }
+
 }

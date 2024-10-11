@@ -1,80 +1,45 @@
-# ---
-# - name: Install Java
-#   apt:
-#     name: openjdk-11-jdk
-#     state: present
-
-# - name: Pull Jenkins Docker image
-#   docker_image:
-#     name: jenkins/jenkins
-#     source: pull
-#     tag: lts-jdk17
-
-# - name: Create a volume for Jenkins data
-#   docker_volume:
-#     name: jenkins_home
-
-# - name: Create Jenkins home directory
-#   file:
-#     path: /var/jenkins_home
-#     state: directory
-#     owner: 1000
-#     group: 1000
-#     mode: '0755'
-
-# - name: Run Jenkins container
-#   docker_container:
-#     name: jenkins
-#     image: jenkins/jenkins:lts
-#     state: started
-#     restart_policy: always
-#     ports:
-#       - '8080:8080' # Jenkins UI port
-#       - '50000:50000' # Jenkins agent port (for connecting agents)
-#     volumes:
-#       - /var/jenkins_home:/var/jenkins_home
-# - name: Wait for Jenkins to be up
-#   uri:
-#     url: http://localhost:8080
-#     return_content: yes
-#   register: jenkins_status
-#   retries: 10
-#   delay: 15
-#   until: jenkins_status.status == 200
-#   ignore_errors: true
-
 ---
-- name: Pull Jenkins Docker image
-  docker_image:
-    name: jenkins/jenkins
-    source: pull
-    tag: lts-jdk17
+- name: Install Fontconfig and OpenJDK 17
+  ansible.builtin.apt:
+    name:
+      - fontconfig
+      - openjdk-17-jre
+    state: present
 
-- name: Create Jenkins home directory
-  file:
-    path: /var/jenkins_home
-    state: directory
-    owner: 1000
-    group: 1000
-    mode: '0755'
+- name: Remove existing Jenkins GPG key (if exists)
+  ansible.builtin.apt_key:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+    state: absent
 
-- name: Fix permissions on Jenkins home directory
-  ansible.builtin.command:
-    cmd: chown -R 1000:1000 /var/jenkins_home
+- name: Remove existing Jenkins repository (if exists)
+  ansible.builtin.apt_repository:
+    repo: 'deb http://pkg.jenkins.io/debian-stable binary/'
+    state: absent
 
-- name: Fix Access to Docker Socket directory
-  ansible.builtin.command:
-    cmd: chmod 666 /var/run/docker.sock
+- name: Add Jenkins GPG key
+  ansible.builtin.get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+    dest: /usr/share/keyrings/jenkins-keyring.asc
+    mode: '0644'
 
-- name: Run Jenkins container
-  docker_container:
+- name: Add Jenkins repository
+  ansible.builtin.apt_repository:
+    repo: 'deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] http://pkg.jenkins.io/debian-stable binary/'
+    state: present
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Jenkins
+  ansible.builtin.apt:
     name: jenkins
-    image: jenkins/jenkins:lts-jdk17
+    state: present
+    update_cache: yes
+    force_apt_get: yes
+
+- name: Start Jenkins service
+  ansible.builtin.systemd:
+    name: jenkins
     state: started
-    restart_policy: always
-    ports:
-      - '8080:8080' # Jenkins UI port
-      - '50000:50000' # Jenkins agent port
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /var/jenkins_home:/var/jenkins_home
+    enabled: yes

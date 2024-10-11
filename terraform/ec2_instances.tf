@@ -26,13 +26,18 @@ resource "aws_instance" "k3s_instance" {
     echo "Installing Helm..."
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-    echo "Adding NGINX ingress Helm repo..."
-    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-    helm repo update
+    # echo "Adding NGINX ingress Helm repo..."
+    # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    # helm repo update
 
-    echo "Installing NGINX ingress controller..."
-    helm install nginx-ingress ingress-nginx/ingress-nginx \
-    --set controller.publishService.enabled=true
+    # making nginx namespace
+    kubectl create namespace nginx-namespace
+
+    echo "Installing NGINX"
+    helm install ingress oci://registry-1.docker.io/bitnamicharts/nginx --namespace nginx-namespace
+
+    # helm install nginx-ingress ingress-nginx/ingress-nginx \
+    # --set controller.publishService.enabled=true
   EOF
   tags = {
     Name = "k3s-instance"

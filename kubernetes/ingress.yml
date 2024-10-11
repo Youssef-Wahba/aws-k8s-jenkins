@@ -1,19 +1,19 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nodejs-dns-resolver-ingress
-  namespace: default
+  name: nodejs-app-ingress
+  namespace: nginx-namespace
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: <your-domain.com> # Replace with your domain or IP
+    - host: ywahba.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: nodejs-dns-resolver-service
+                name: nodejs-app-service
                 port:
                   number: 80

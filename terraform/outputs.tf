@@ -11,11 +11,6 @@ output "k3s_instance_public_ip" {
   value = aws_instance.k3s_instance.public_ip
 }
 
-# output "k3s_instance_public_ip" {
-#   description = "The public IP address of the k3s instance (ELASTIC IP)"
-#   value       = aws_eip.k3s_eip.public_ip
-# }
-
 output "jenkins_docker_instance_public_ip" {
   value = aws_instance.jenkins_docker_instance.public_ip
 }
