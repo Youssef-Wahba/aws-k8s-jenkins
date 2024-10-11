@@ -7,8 +7,8 @@ pipeline {
         AWS_REGION = credentials("AWS_REGION")
         AWS_ACCESS_KEY_ID = credentials("AWS_ACCESS_KEY_ID")
         AWS_SECRET_ACCESS_KEY = credentials("AWS_SECRET_ACCESS_KEY")
-        ECR_REPO = credentials("ECR_REPO")
         AWS_ACCOUNT_ID = credentials("AWS_ACCOUNT_ID")
+        ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
     }
 
     stages {
@@ -49,6 +49,11 @@ pipeline {
         stage('Tag and Push to ECR') {
             steps {
                 script {
+                    // Debugging: Print environment variables
+                    echo "AWS_REGION: ${AWS_REGION}"
+                    echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"
+                    echo "ECR_REPO: ${ECR_REPO}"
+
                     // Log in to ECR
                     echo "Logging in to AWS ECR..."
                     sh """
