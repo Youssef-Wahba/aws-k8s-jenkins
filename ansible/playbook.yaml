@@ -4,6 +4,6 @@
   hosts: jenkins_servers
   become: true
   roles:
-    - docker
+    # - docker
     - jenkins
-    - aws-cli
+    # - aws-cli
