@@ -81,12 +81,11 @@ pipeline {
         //         }
         //     }
         // }
-    }
+    
 
     post {
         always {
             cleanWs()  // Clean workspace after build
         }
     }
-
 }
