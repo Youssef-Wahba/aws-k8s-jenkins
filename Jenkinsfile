@@ -19,6 +19,9 @@ pipeline {
                         // file(credentialsId: 'KUBE_CONFIG', variable: 'KUBECONFIG')
                     ]) {
                         echo 'AWS and Kubernetes credentials loaded as environment variables.'
+                        echo "AWS_REGION: ${AWS_REGION}"  // Debugging output
+                        echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"  // Debugging output
+                        echo 'AWS credentials loaded as environment variables.'
                     }
                 }
             }
