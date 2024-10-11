@@ -15,6 +15,7 @@ pipeline {
                         string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
                         string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO'),
+                        string(credentialsId: 'AWS_ACCOUNT_ID', variable: 'AWS_ACCOUNT_ID'),
                         // file(credentialsId: 'KUBE_CONFIG', variable: 'KUBECONFIG')
                     ]) {
                         echo 'AWS and Kubernetes credentials loaded as environment variables.'
@@ -41,7 +42,7 @@ pipeline {
             steps {
                 script {
                     def ecrLoginCommand = """
-                        aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                        aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin ${env.AWS_ACCOUNT_ID}.dkr.ecr.${env.AWS_REGION}.amazonaws.com
                     """
                     sh ecrLoginCommand
                     // try {
