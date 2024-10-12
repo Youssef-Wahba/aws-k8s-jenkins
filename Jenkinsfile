@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'bitnami/kubectl:latest' // Docker image with kubectl
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         IMAGE_NAME = credentials("IMAGE_NAME")
@@ -14,7 +9,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials("AWS_SECRET_ACCESS_KEY")
         AWS_ACCOUNT_ID = credentials("AWS_ACCOUNT_ID")
         ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
-        KUBECONFIG_PATH = "${env.WORKSPACE}/kubeconfig"  // Set path for KubeConfig
+        KUBECONFIG_PATH = "${env.WORKSPACE}/kubeconfig"
     }
 
     stages {
