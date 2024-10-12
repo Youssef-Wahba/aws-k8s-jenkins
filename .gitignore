@@ -11,3 +11,4 @@ terraform_project/terraform.tfstate
 /terraform/.terraform
 terraform/.terraform.tfstate.lock.info
 app/node_modules
+k3s.yaml

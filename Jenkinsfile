@@ -12,26 +12,6 @@ pipeline {
     }
 
     stages {
-        // stage('Setup Secrets') {
-        //     steps {
-        //         script {
-        //             withCredentials([
-        //                 // string(credentialsId: 'AWS_REGION', variable: 'AWS_REGION'),
-        //                 string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
-        //                 string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY'),
-        //                 string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO'),
-        //                 string(credentialsId: 'AWS_ACCOUNT_ID', variable: 'AWS_ACCOUNT_ID'),
-        //                 // file(credentialsId: 'KUBE_CONFIG', variable: 'KUBECONFIG')
-        //             ]) {
-        //                 echo 'AWS and Kubernetes credentials loaded as environment variables.'
-        //                 echo "AWS_REGION: ${AWS_REGION}"  // Debugging output
-        //                 echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"  // Debugging output
-        //                 echo 'AWS credentials loaded as environment variables.'
-        //             }
-        //         }
-        //     }
-        // }
-
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Youssef-Wahba/aws-k8s-jenkins.git'
@@ -67,7 +47,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Setup KubeConfig') {
                 steps {
                     script {
@@ -81,28 +61,35 @@ pipeline {
                     }
                 }
             }
-    }
+
+        stage('Apply Kubernetes Manifests') {
+            steps {
+                script {
+                    sh """
+                        kubectl set image deployment/${IMAGE_NAME} ${IMAGE_NAME}=${ECR_REPO}:${BUILD_NUMBER} --namespace nginx-namespace
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
+                        kubectl apply -f k8s/ingress.yaml
+                        kubectl apply -f k8s/hpa.yaml
+                    """
+                }
+            }
+        }   
         
-
-        // stage('Apply Kubernetes Manifests') {
-        //     steps {
-        //         script {
-        //             export KUBECONFIG=${KUBECONFIG_PATH}
-        //             // Update the Kubernetes deployment with the new Docker image
-        //             sh "kubectl set image deployment/${IMAGE_NAME} ${IMAGE_NAME}=${ECR_REPO}:${BUILD_NUMBER} --namespace nginx-namespace"
-        //             sh 'kubectl apply -f k8s/deployment.yaml'
-        //             sh 'kubectl apply -f k8s/service.yaml'
-        //             sh 'kubectl apply -f k8s/ingress.yaml'
-        //             sh 'kubectl apply -f k8s/hpa.yaml'
-        //             sh 'kubectl apply -f k8s/hpa.yaml'
-        //         }
-        //     }
-        // }
-    
-
+        stage('Print Logs') {
+            steps {
+                script {
+                    echo "Fetching logs for app=nodejs-app in nginx-namespace..."
+                    sh """
+                        kubectl logs -n nginx-namespace -l app=nodejs-app --all-containers=true
+                    """
+                }
+            }
+        }
+    }
     post {
         always {
-            cleanWs()  // Clean workspace after build
+            cleanWs()
         }
     }
 }
