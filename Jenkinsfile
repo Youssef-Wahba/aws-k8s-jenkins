@@ -67,20 +67,22 @@ pipeline {
                 }
             }
         }
-    }
-    stage('Setup KubeConfig') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'K3S_KUBECONFIG', variable: 'KUBECONFIG_FILE')]) {
-                        sh """
-                            echo 'Setting up kubeconfig...'
-                            cp ${KUBECONFIG_FILE} /tmp/kubeconfig
-                            export KUBECONFIG=/tmp/kubeconfig
-                        """
+        
+        stage('Setup KubeConfig') {
+                steps {
+                    script {
+                        withCredentials([file(credentialsId: 'K3S_KUBECONFIG', variable: 'KUBECONFIG_FILE')]) {
+                            sh """
+                                echo 'Setting up kubeconfig...'
+                                cp ${KUBECONFIG_FILE} /tmp/kubeconfig
+                                export KUBECONFIG=/tmp/kubeconfig
+                            """
+                        }
                     }
                 }
             }
-        }
+    }
+        
 
         // stage('Apply Kubernetes Manifests') {
         //     steps {
