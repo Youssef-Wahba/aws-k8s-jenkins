@@ -20,24 +20,17 @@ resource "aws_instance" "k3s_instance" {
     systemctl start k3s
 
     echo "Setting kubeconfig permissions..."
-    chmod 600 /etc/rancher/k3s/k3s.yaml
+    chmod 777 /etc/rancher/k3s/k3s.yaml
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
     echo "Installing Helm..."
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
-    # echo "Adding NGINX ingress Helm repo..."
-    # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-    # helm repo update
 
     # making nginx namespace
     kubectl create namespace nginx-namespace
 
     echo "Installing NGINX"
     helm install ingress oci://registry-1.docker.io/bitnamicharts/nginx --namespace nginx-namespace
-
-    # helm install nginx-ingress ingress-nginx/ingress-nginx \
-    # --set controller.publishService.enabled=true
   EOF
   tags = {
     Name = "k3s-instance"

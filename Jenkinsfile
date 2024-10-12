@@ -68,19 +68,31 @@ pipeline {
             }
         }
     }
+    stage('Setup KubeConfig') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'K3S_KUBECONFIG', variable: 'KUBECONFIG_FILE')]) {
+                        sh """
+                            echo 'Setting up kubeconfig...'
+                            cp ${KUBECONFIG_FILE} /tmp/kubeconfig
+                            export KUBECONFIG=/tmp/kubeconfig
+                        """
+                    }
+                }
+            }
+        }
 
-
-        // stage('Deploy to Kubernetes') {
+        // stage('Apply Kubernetes Manifests') {
         //     steps {
         //         script {
-        //             // Use the kubeconfig credentials to apply Kubernetes manifests
-        //             withKubeConfig([credentialsId: 'KUBE_CONFIG', path: '~/.kube/config']) {
-        //                 // Update the Kubernetes deployment with the new Docker image
-        //                 sh "kubectl set image deployment/${IMAGE_NAME} ${IMAGE_NAME}=${ECR_REPO}:${BUILD_NUMBER} --namespace default"
-        //                 sh 'kubectl apply -f k8s/deployment.yaml'
-        //                 sh 'kubectl apply -f k8s/service.yaml'
-        //                 sh 'kubectl apply -f k8s/ingress.yaml'
-        //             }
+        //             export KUBECONFIG=${KUBECONFIG_PATH}
+        //             // Update the Kubernetes deployment with the new Docker image
+        //             sh "kubectl set image deployment/${IMAGE_NAME} ${IMAGE_NAME}=${ECR_REPO}:${BUILD_NUMBER} --namespace nginx-namespace"
+        //             sh 'kubectl apply -f k8s/deployment.yaml'
+        //             sh 'kubectl apply -f k8s/service.yaml'
+        //             sh 'kubectl apply -f k8s/ingress.yaml'
+        //             sh 'kubectl apply -f k8s/hpa.yaml'
+        //             sh 'kubectl apply -f k8s/hpa.yaml'
         //         }
         //     }
         // }
