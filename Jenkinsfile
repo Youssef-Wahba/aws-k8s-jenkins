@@ -56,7 +56,7 @@ pipeline {
                             sh """
                                 echo 'Setting up kubeconfig...'
                                 cp ${KUBECONFIG_FILE} ${KUBECONFIG_PATH}
-                                env.KUBECONFIG = KUBECONFIG_PATH
+                                export KUBECONFIG = KUBECONFIG_PATH
                             """
                         }
                     }
