@@ -9,6 +9,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials("AWS_SECRET_ACCESS_KEY")
         AWS_ACCOUNT_ID = credentials("AWS_ACCOUNT_ID")
         ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}"
+        KUBECONFIG_PATH = "${env.WORKSPACE}/kubeconfig"  // Set path for KubeConfig
     }
 
     stages {
@@ -54,8 +55,8 @@ pipeline {
                         withCredentials([file(credentialsId: 'K3S_KUBECONFIG', variable: 'KUBECONFIG_FILE')]) {
                             sh """
                                 echo 'Setting up kubeconfig...'
-                                cp ${KUBECONFIG_FILE} /tmp/kubeconfig
-                                export KUBECONFIG=/tmp/kubeconfig
+                                cp ${KUBECONFIG_FILE} ${KUBECONFIG_PATH}
+                                env.KUBECONFIG = KUBECONFIG_PATH
                             """
                         }
                     }
