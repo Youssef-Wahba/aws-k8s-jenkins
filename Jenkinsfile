@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'bitnami/kubectl:latest' // Docker image with kubectl
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
 
     environment {
         IMAGE_NAME = credentials("IMAGE_NAME")
